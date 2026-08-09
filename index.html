@@ -113,17 +113,16 @@
 
     .hero-headshot {
         position: absolute;
-        top: 50%;
-        right: 2%;
-        transform: translateY(-45%);
-        height: 86%;
-        max-height: 680px;
+        bottom: -6%;
+        right: 4%;
+        height: 78%;
+        max-height: 560px;
         width: auto;
         z-index: 0;
         opacity: 0.92;
         pointer-events: none;
-        -webkit-mask-image: linear-gradient(115deg, transparent 0%, transparent 8%, black 30%);
-        mask-image: linear-gradient(115deg, transparent 0%, transparent 8%, black 30%);
+        -webkit-mask-image: radial-gradient(ellipse 115% 115% at 78% 20%, black 38%, transparent 88%);
+        mask-image: radial-gradient(ellipse 115% 115% at 78% 20%, black 38%, transparent 88%);
     }
 
     .hero-inner { max-width: 680px; position: relative; z-index: 1; }
@@ -426,6 +425,71 @@
 
     .contact-value { color: var(--ink); font-size: 0.95rem; }
 
+    /* WhatsApp form */
+    .whatsapp-form-wrap {
+        margin-top: 3rem;
+        padding-top: 2.5rem;
+        border-top: 1px solid var(--surface-line);
+    }
+
+    .whatsapp-form-title {
+        font-size: 1.4rem;
+        margin: 0.5rem 0 0.5rem;
+        color: var(--ink);
+    }
+
+    .whatsapp-form {
+        margin-top: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.1rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.1rem;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .form-field label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+    }
+
+    .form-field input,
+    .form-field textarea {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        color: var(--ink);
+        background: var(--bg);
+        border: 1px solid var(--surface-line);
+        border-radius: var(--radius);
+        padding: 0.7rem 0.85rem;
+        resize: vertical;
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
+
+    .whatsapp-submit {
+        align-self: flex-start;
+        border: none;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+    }
+
     /* Footer */
     footer {
         padding: 2rem;
@@ -706,6 +770,39 @@
                 <span class="contact-value">Dhaanish Ahmed College of Engineering</span>
             </div>
         </div>
+
+        <div class="whatsapp-form-wrap">
+            <span class="eyebrow">Or send a message directly</span>
+            <h3 class="whatsapp-form-title">Reach me on WhatsApp</h3>
+            <p class="section-subtitle">Fill this in and it opens WhatsApp with your message ready to send.</p>
+            <form id="whatsapp-form" class="whatsapp-form">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="wa-name">Name</label>
+                        <input type="text" id="wa-name" name="name" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="wa-contact">Contact (email or phone)</label>
+                        <input type="text" id="wa-contact" name="contact" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="wa-company">Company</label>
+                        <input type="text" id="wa-company" name="company">
+                    </div>
+                    <div class="form-field">
+                        <label for="wa-designation">Designation</label>
+                        <input type="text" id="wa-designation" name="designation">
+                    </div>
+                </div>
+                <div class="form-field form-field-full">
+                    <label for="wa-message">Message</label>
+                    <textarea id="wa-message" name="message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="cta-button whatsapp-submit">Send via WhatsApp</button>
+            </form>
+        </div>
     </div>
 </section>
 
@@ -736,6 +833,33 @@
         section.style.transform = 'translateY(20px)';
         section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         observer.observe(section);
+    });
+
+    const whatsappForm = document.getElementById('whatsapp-form');
+    const whatsappNumber = '918754494456'; // +91 87544 94456, no spaces or plus sign
+
+    whatsappForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById('wa-name').value.trim();
+        const contact = document.getElementById('wa-contact').value.trim();
+        const company = document.getElementById('wa-company').value.trim();
+        const designation = document.getElementById('wa-designation').value.trim();
+        const message = document.getElementById('wa-message').value.trim();
+
+        const lines = [
+            'Hi Krupha, I\'d like to connect.',
+            '',
+            `Name: ${name}`,
+            `Contact: ${contact}`
+        ];
+        if (company) lines.push(`Company: ${company}`);
+        if (designation) lines.push(`Designation: ${designation}`);
+        lines.push('', `Message: ${message}`);
+
+        const text = encodeURIComponent(lines.join('\n'));
+        const url = `https://wa.me/${whatsappNumber}?text=${text}`;
+        window.open(url, '_blank');
     });
 </script>
 </body>
