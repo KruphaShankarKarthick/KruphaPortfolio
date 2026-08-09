@@ -79,6 +79,32 @@
 
     .nav-links a:hover { color: var(--accent); }
 
+    .nav-toggle {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 32px;
+        height: 32px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .nav-toggle span {
+        display: block;
+        width: 100%;
+        height: 2px;
+        background: var(--ink);
+        border-radius: 2px;
+        transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
     /* Sections */
     section {
         padding: 6rem 2rem;
@@ -394,6 +420,23 @@
     .timeline-org { color: var(--moss); font-size: 0.88rem; margin-bottom: 0.35rem; }
     .timeline-desc { color: var(--ink-soft); font-size: 0.9rem; max-width: 560px; }
 
+    /* Resume */
+    .resume-embed {
+        border: 1px solid var(--surface-line);
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: var(--surface);
+    }
+
+    .resume-embed iframe {
+        width: 100%;
+        height: 900px;
+        border: none;
+        display: block;
+    }
+
+    .resume-download { margin-top: 1.5rem; margin-left: 0; }
+
     /* Contact */
     .contact { background: var(--surface); }
 
@@ -505,13 +548,71 @@
     }
 
     @media (max-width: 768px) {
-        .nav-links { display: none; }
-        .hero-content h1 { font-size: 2.3rem; }
-        .about-grid { grid-template-columns: 1fr; }
+        .nav-container { padding: 1rem 1.25rem; }
+
+        .nav-toggle { display: flex; }
+
+        .nav-links {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            flex-direction: column;
+            gap: 0;
+            background: var(--bg);
+            border-bottom: 1px solid var(--surface-line);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .nav-links.open { max-height: 480px; }
+
+        .nav-links li { width: 100%; }
+
+        .nav-links a {
+            display: block;
+            padding: 0.9rem 1.25rem;
+            border-bottom: 1px solid var(--surface-line);
+        }
+
+        section { padding: 4rem 1.25rem; }
+
+        .hero { min-height: auto; padding: 8rem 1.25rem 4rem; }
+
+        .hero-content h1 { font-size: 2.1rem; }
+
+        .hero-content p { font-size: 1rem; }
+
+        .section-title { font-size: 1.6rem; }
+
+        .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+
         .about-image { order: -1; aspect-ratio: 16/10; }
+
+        .stat-row { flex-direction: column; gap: 1.25rem; }
+
         .project-feature { grid-template-columns: 1fr; }
+
+        .project-body { padding: 1.5rem; }
+
+        .skills-grid { grid-template-columns: 1fr; }
+
         .contact-grid { grid-template-columns: 1fr; }
+
+        .form-row { grid-template-columns: 1fr; }
+
         .cta-secondary { margin-left: 0; margin-top: 0.75rem; display: block; text-align: center; }
+
+        .whatsapp-submit { width: 100%; text-align: center; }
+
+        .resume-embed iframe { height: 480px; }
+    }
+
+    @media (max-width: 420px) {
+        .hero-content h1 { font-size: 1.75rem; }
+        .logo { font-size: 1rem; }
+        .section-title { font-size: 1.4rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -530,15 +631,19 @@
 <nav>
     <div class="nav-container">
         <div class="logo">Krupha Shankar K</div>
-        <ul class="nav-links">
+        <ul class="nav-links" id="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#projects">Projects</a></li>
             <li><a href="#leadership">Leadership</a></li>
             <li><a href="#skills">Skills</a></li>
             <li><a href="#achievements">Achievements</a></li>
+            <li><a href="#resume">Resume</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
+            <span></span><span></span><span></span>
+        </button>
     </div>
 </nav>
 
@@ -744,6 +849,19 @@
     </div>
 </section>
 
+<!-- Resume -->
+<section id="resume">
+    <div class="section-head">
+        <span class="eyebrow">Resume</span>
+        <h2 class="section-title">My resume</h2>
+        <p class="section-subtitle">Viewable right here — use the toolbar inside the frame to zoom or scroll through it page by page.</p>
+    </div>
+    <div class="resume-embed">
+        <iframe src="resume.pdf" title="Krupha Shankar K — Resume" loading="lazy"></iframe>
+    </div>
+    <a href="resume.pdf" download class="cta-secondary resume-download">Download PDF</a>
+</section>
+
 <!-- Contact -->
 <section id="contact" class="contact">
     <div class="section-head">
@@ -811,6 +929,21 @@
 </footer>
 
 <script>
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+
+    navToggle.addEventListener('click', () => {
+        const isOpen = navLinks.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        });
+    });
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
